@@ -8262,6 +8262,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustfs-replication"
+version = "0.0.5"
+dependencies = [
+ "byteorder",
+ "lazy_static",
+ "regex",
+ "rmp-serde",
+ "rustfs-ecstore",
+ "rustfs-utils",
+ "s3s",
+ "serde",
+ "time",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
 name = "rustfs-rio"
 version = "0.0.5"
 dependencies = [
