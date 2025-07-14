@@ -15,7 +15,6 @@
 use crate::StorageAPI;
 use crate::bucket::metadata::{BUCKET_LIFECYCLE_CONFIG, load_bucket_metadata_parse};
 use crate::bucket::utils::{deserialize, is_meta_bucketname};
-use crate::cmd::bucket_targets;
 use crate::error::{Error, Result, is_err_bucket_not_found};
 use crate::global::{GLOBAL_Endpoints, is_dist_erasure, is_erasure, new_object_layer_fn};
 use crate::heal::heal_commands::HealOpts;
@@ -261,7 +260,7 @@ impl BucketMetadataSys {
                     if let Some(bucket) = buckets.get(idx) {
                         let x = Arc::new(res);
                         mp.insert(bucket.clone(), x.clone());
-                        bucket_targets::init_bucket_targets(bucket, x.clone()).await;
+                        // TODO:EventNotifier,BucketTargetSys
                     }
                 }
                 Err(e) => {

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 use crate::bucket::metadata_sys::get_versioning_config;
+use crate::bucket::replication;
 use crate::bucket::versioning::VersioningApi as _;
-use crate::cmd::bucket_replication::{ReplicationStatusType, VersionPurgeStatusType};
 use crate::error::{Error, Result};
 use crate::heal::heal_ops::HealSequence;
 use crate::store_utils::clean_metadata;
@@ -397,9 +397,9 @@ pub struct ObjectInfo {
     pub metadata_only: bool,
     pub version_only: bool,
     pub replication_status_internal: String,
-    pub replication_status: ReplicationStatusType,
+    pub replication_status: replication::StatusType,
     pub version_purge_status_internal: String,
-    pub version_purge_status: VersionPurgeStatusType,
+    pub version_purge_status: replication::VersionPurgeStatusType,
     pub checksum: Vec<u8>,
 }
 
