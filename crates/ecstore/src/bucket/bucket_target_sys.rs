@@ -20,8 +20,10 @@ use std::fmt;
 use std::sync::{Arc, Mutex, RwLock};
 use std::time::{Duration, Instant, SystemTime};
 use time::OffsetDateTime;
+use tracing::error;
 use url::Url;
 
+use crate::bucket::metadata::BucketMetadata;
 use crate::bucket::target::{self, BucketTarget, BucketTargets, Credentials};
 
 const DEFAULT_HEALTH_CHECK_DURATION: Duration = Duration::from_secs(5);
@@ -100,7 +102,7 @@ pub struct LatencyAverage {
     pub avg: Duration,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct LatencyStat {
     pub lastmin: LastMinuteLatency,
     pub curr: Duration,
@@ -111,13 +113,7 @@ pub struct LatencyStat {
 
 impl LatencyStat {
     pub fn new() -> Self {
-        Self {
-            lastmin: LastMinuteLatency::new(),
-            curr: Duration::from_secs(0),
-            avg: Duration::from_secs(0),
-            peak: Duration::from_secs(0),
-            n: 0,
-        }
+        Self::default()
     }
 
     pub fn update(&mut self, duration: Duration) {
@@ -462,6 +458,29 @@ impl BucketTargetSys {
                 targets_map.insert(bucket.to_string(), new_targets.targets.clone());
             }
         }
+    }
+
+    pub fn set(&self, bucket: &str, meta: &BucketMetadata) {
+        let Some(config) = &meta.bucket_target_config else {
+            return;
+        };
+
+        if config.is_empty() {
+            return;
+        }
+
+        for target in config.targets {
+            let cli = match self.get_remote_target_client(&target) {
+                Ok(cli) => cli,
+                Err(e) => {
+                    error!("set bucket target:{} error:{}", bucket, e);
+                    continue;
+                }
+            };
+            // TODO: ArnTarget
+        }
+
+        unimplemented!()
     }
 }
 
